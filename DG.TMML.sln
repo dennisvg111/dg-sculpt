@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34221.43
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DG.TMML", "src\DG.TMML.csproj", "{AE8DA14B-B11E-4AE5-864F-817149CABF2A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DG.TMML.Tests", "tests\DG.TMML.Tests.csproj", "{3554E2C4-1CCA-4E35-99C5-4AFD1C881764}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE8DA14B-B11E-4AE5-864F-817149CABF2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE8DA14B-B11E-4AE5-864F-817149CABF2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE8DA14B-B11E-4AE5-864F-817149CABF2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE8DA14B-B11E-4AE5-864F-817149CABF2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3554E2C4-1CCA-4E35-99C5-4AFD1C881764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3554E2C4-1CCA-4E35-99C5-4AFD1C881764}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3554E2C4-1CCA-4E35-99C5-4AFD1C881764}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3554E2C4-1CCA-4E35-99C5-4AFD1C881764}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {643D0F3E-D359-4356-902D-C2E83031054D}
+	EndGlobalSection
+EndGlobal
