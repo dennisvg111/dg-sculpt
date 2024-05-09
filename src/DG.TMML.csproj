@@ -24,7 +24,7 @@
     <PackageTags>utilities</PackageTags>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <Version>$(AssemblyVersion)</Version>
-    <Description>TOML parsing utilities</Description>
+    <Description>TOML/YAML parsing utilities</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
