@@ -2,16 +2,16 @@
   <PropertyGroup>
     <ProjectGuid>{AE8DA14B-B11E-4AE5-864F-817149CABF2A}</ProjectGuid>
     <TargetFramework>net452</TargetFramework>
-    <AssemblyTitle>DG.TMML</AssemblyTitle>
+    <AssemblyTitle>DG.Sculpt</AssemblyTitle>
     <AssemblyVersion>1.13.1</AssemblyVersion>
-    <Product>DG.TMML</Product>
+    <Product>DG.Sculpt</Product>
     <Copyright>Copyright ©  2023</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Title>DG.TMML</Title>
+    <Title>DG.Sculpt</Title>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/dennisvg111/dg-toml</RepositoryUrl>
+    <RepositoryUrl>https://github.com/dennisvg111/dg-sculpt</RepositoryUrl>
     <Deterministic>false</Deterministic>
     <PackageId>Dennisvg.$(AssemblyName)</PackageId>
     <Company>$(AssemblyName)</Company>
@@ -24,7 +24,7 @@
     <PackageTags>utilities</PackageTags>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <Version>$(AssemblyVersion)</Version>
-    <Description>TOML/YAML parsing utilities</Description>
+    <Description>Serialization & Configuration Unified Language Parsing Tool</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>

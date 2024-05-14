@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DG.TMML", "src\DG.TMML.csproj", "{AE8DA14B-B11E-4AE5-864F-817149CABF2A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DG.Sculpt", "src\DG.Sculpt.csproj", "{AE8DA14B-B11E-4AE5-864F-817149CABF2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DG.TMML.Tests", "tests\DG.TMML.Tests.csproj", "{3554E2C4-1CCA-4E35-99C5-4AFD1C881764}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DG.Sculpt.Tests", "tests\DG.Sculpt.Tests.csproj", "{3554E2C4-1CCA-4E35-99C5-4AFD1C881764}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

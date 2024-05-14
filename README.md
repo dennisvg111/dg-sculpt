@@ -1,3 +1,3 @@
-# dg-serialization
+# dg-sculpt
  
- Too Many Markup Languages, while sometimes a simple config/serialization language is all you need.
+Serialization & Configuration Unified Language Parsing Tool

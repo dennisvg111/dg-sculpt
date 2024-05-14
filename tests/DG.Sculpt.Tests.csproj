@@ -7,8 +7,8 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
-    <AssemblyTitle>DG.TMML.Tests</AssemblyTitle>
-    <Product>DG.TMML.Tests</Product>
+    <AssemblyTitle>DG.Sculpt.Tests</AssemblyTitle>
+    <Product>DG.Sculpt.Tests</Product>
     <Copyright>Copyright ©  2024</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
@@ -28,6 +28,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\DG.TMML.csproj" />
+    <ProjectReference Include="..\src\DG.Sculpt.csproj" />
   </ItemGroup>
 </Project>
