@@ -24,7 +24,7 @@
     <PackageTags>utilities</PackageTags>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <Version>$(AssemblyVersion)</Version>
-    <Description>Serialization & Configuration Unified Language Parsing Tool</Description>
+    <Description>Serialization &amp; Configuration Unified Language Parsing Tool</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
