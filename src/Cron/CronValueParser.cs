@@ -33,61 +33,51 @@ namespace DG.Sculpt.Cron
         }
 
         /// <summary>
-        /// Converts the given <paramref name="s"/> to a valid <see cref="CronValue"/>. A return value indicates if the conversion succeeded.
-        /// </summary>
-        /// <param name="s"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public bool TryParse(string s, out CronValue value)
-        {
-            if (s == CronValue.AnyIndicator)
-            {
-                value = new CronValue(null, null);
-                return true;
-            }
-
-            if (int.TryParse(s, out int result))
-            {
-                value = new CronValue(result, null);
-                if (result < _min)
-                {
-                    return false;
-                }
-                if (result > _max)
-                {
-                    value = new CronValue((result % (_max + 1) + _min), null);
-                    return result - _allowedOverflow <= _max;
-                }
-                return true;
-            }
-
-            if (TryGetIndex(s, out int index))
-            {
-                value = new CronValue(index + _min, s);
-                return true;
-            }
-            value = CronValue.Any;
-            return false;
-        }
-
-        /// <summary>
         /// Converts the given <paramref name="s"/> to a valid <see cref="CronValue"/>.
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        /// <exception cref="CronParsingException"></exception>
+        /// <exception cref="CronParsingException" />
         public CronValue Parse(string s)
         {
-            if (TryParse(s, out CronValue value))
+            var result = TryParse(s);
+            return result.GetResultOrThrow();
+        }
+
+        /// <summary>
+        /// Converts the given <paramref name="s"/> to a valid <see cref="CronValue"/>. A return value indicates if the conversion succeeded.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        internal ParseResult<CronValue> TryParse(string s)
+        {
+            if (s == CronValue.AnyIndicator)
             {
-                return value;
+                return ParseResult.Success(CronValue.Any);
             }
 
-            if (!int.TryParse(s, out _))
+            if (int.TryParse(s, out int result))
             {
-                throw new CronParsingException(_fieldName, $"'{s}' is not a valid value");
+                if (result < _min)
+                {
+                    return ParseResult<CronValue>.Throw(new CronParsingException(_fieldName, $"{s} should be at least {_min}"));
+                }
+                if (result > _max)
+                {
+                    if (result - _allowedOverflow <= _max)
+                    {
+                        return ParseResult.Success(new CronValue((result % (_max + 1) + _min), null));
+                    }
+                    return ParseResult<CronValue>.Throw(new CronParsingException(_fieldName, $"{s} should be at most {_max}"));
+                }
+                return ParseResult.Success(new CronValue(result, null));
             }
-            throw new CronParsingException(_fieldName, $"{s} should be at least {_min} and at most {_max}");
+
+            if (TryGetIndex(s, out int index))
+            {
+                return ParseResult.Success(new CronValue(index + _min, s));
+            }
+            return ParseResult<CronValue>.Throw(new CronParsingException(_fieldName, $"'{s}' is not a valid value"));
         }
 
         private bool TryGetIndex(string key, out int index)
