@@ -60,7 +60,7 @@ namespace DG.Sculpt.Cron
             {
                 if (result < _min)
                 {
-                    return ParseResult<CronValue>.Throw(new CronParsingException(_fieldName, $"{s} should be at least {_min}"));
+                    return ParseResult.Throw<CronValue>(new CronParsingException(_fieldName, $"{s} should be at least {_min}"));
                 }
                 if (result > _max)
                 {
@@ -68,7 +68,7 @@ namespace DG.Sculpt.Cron
                     {
                         return ParseResult.Success(new CronValue((result % (_max + 1) + _min), null));
                     }
-                    return ParseResult<CronValue>.Throw(new CronParsingException(_fieldName, $"{s} should be at most {_max}"));
+                    return ParseResult.Throw<CronValue>(new CronParsingException(_fieldName, $"{s} should be at most {_max}"));
                 }
                 return ParseResult.Success(new CronValue(result, null));
             }
@@ -77,7 +77,7 @@ namespace DG.Sculpt.Cron
             {
                 return ParseResult.Success(new CronValue(index + _min, s));
             }
-            return ParseResult<CronValue>.Throw(new CronParsingException(_fieldName, $"'{s}' is not a valid value"));
+            return ParseResult.Throw<CronValue>(new CronParsingException(_fieldName, $"'{s}' is not a valid value"));
         }
 
         private bool TryGetIndex(string key, out int index)

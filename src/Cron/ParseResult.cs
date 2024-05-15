@@ -23,19 +23,6 @@ namespace DG.Sculpt.Cron
             }
             throw _exception;
         }
-
-        public void ThrowIfNeeded()
-        {
-            if (!_hasResult)
-            {
-                throw _exception;
-            }
-        }
-
-        public static ParseResult<T> Throw(Exception exception)
-        {
-            return new ParseResult<T>(default(T), false, exception);
-        }
     }
 
     internal static class ParseResult
