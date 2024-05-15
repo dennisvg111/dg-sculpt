@@ -49,6 +49,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Dennisvg.DG.Common" Version="1.13.3" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>

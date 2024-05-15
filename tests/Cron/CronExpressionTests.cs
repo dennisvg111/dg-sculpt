@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DG.TMML
+namespace DG.Sculpt.Tests.Cron
 {
-    internal class Class1
+    internal class CronExpressionTests
     {
     }
 }
