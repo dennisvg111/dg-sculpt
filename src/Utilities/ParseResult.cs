@@ -1,12 +1,14 @@
 ﻿using System;
 
-namespace DG.Sculpt.Cron
+namespace DG.Sculpt.Utilities
 {
     internal class ParseResult<T>
     {
         private readonly T _value;
         private readonly bool _hasResult;
         private readonly Exception _exception;
+
+        public bool HasResult => _hasResult;
 
         internal ParseResult(T value, bool hasResult, Exception exception)
         {
@@ -23,6 +25,17 @@ namespace DG.Sculpt.Cron
             }
             throw _exception;
         }
+
+        public bool TryGetResult(out T result)
+        {
+            result = _value;
+            return _hasResult;
+        }
+
+        public ParseResult<OtherT> CopyExceptionResult<OtherT>()
+        {
+            return new ParseResult<OtherT>(default, false, _exception);
+        }
     }
 
     internal static class ParseResult
@@ -34,7 +47,7 @@ namespace DG.Sculpt.Cron
 
         public static ParseResult<T> Throw<T>(Exception exception)
         {
-            return new ParseResult<T>(default(T), false, exception);
+            return new ParseResult<T>(default, false, exception);
         }
     }
 }
