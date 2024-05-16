@@ -16,7 +16,9 @@ namespace DG.Sculpt.Cron
         private readonly int _allowedOverflow;
         private readonly string[] _lookUp;
 
-        internal int MaxStepValue => _max - _min;
+        public int Min => _min;
+        public int Max => _max;
+        public int MaxStepValue => _max - _min;
 
         public string FieldName => _fieldName;
 

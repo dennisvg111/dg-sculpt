@@ -38,7 +38,7 @@ namespace DG.Sculpt.Tests.Cron
         [Theory]
         [InlineData("5", "5")]
         [InlineData("2-5", "2-5")]
-        [InlineData("2/4", "2/4")]
+        [InlineData("2/4", "2-10/4")] //if step value exists but range end doesn't, range end gets set to max.
         [InlineData("2-5/4", "2-5/4")]
         [InlineData("*/4", "*/4")]
         [InlineData("ONE-TWO", "ONE-TWO")]

@@ -48,6 +48,11 @@ namespace DG.Sculpt.Cron
                 return startParsed.CopyExceptionResult<CronRange>();
             }
 
+            if (!end.HasValue && start.HasValue && stepValue.HasValue)
+            {
+                end = new CronValue(parser.Max);
+            }
+
             return ParseResult.Success(new CronRange(start, end, stepValue));
         }
 
