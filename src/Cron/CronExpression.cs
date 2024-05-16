@@ -13,13 +13,13 @@ namespace DG.Sculpt.Cron
         private readonly CronField _months;
         private readonly CronField _dayOfWeek;
 
-        public CronField Minutes => _minutes;
-        public CronField Hours => _hours;
-        public CronField DayOfMonth => _dayOfMonth;
-        public CronField Months => _months;
-        public CronField DayOfWeek => _dayOfWeek;
+        public IReadOnlyCronField Minutes => _minutes;
+        public IReadOnlyCronField Hours => _hours;
+        public IReadOnlyCronField DayOfMonth => _dayOfMonth;
+        public IReadOnlyCronField Months => _months;
+        public IReadOnlyCronField DayOfWeek => _dayOfWeek;
 
-        public CronExpression(CronField minutes, CronField hours, CronField dayOfMonth, CronField month, CronField dayOfWeek)
+        private CronExpression(CronField minutes, CronField hours, CronField dayOfMonth, CronField month, CronField dayOfWeek)
         {
             _minutes = minutes;
             _hours = hours;

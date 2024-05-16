@@ -9,7 +9,7 @@ namespace DG.Sculpt.Cron
     /// <summary>
     /// Represents a single field in a <see cref="CronExpression"/>.
     /// </summary>
-    public sealed class CronField : IEquatable<CronField>
+    public sealed class CronField : IReadOnlyCronField, IEquatable<CronField>
     {
         private readonly CronRange[] _ranges;
 
