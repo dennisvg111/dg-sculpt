@@ -1,7 +1,5 @@
 ﻿using DG.Sculpt.Cron;
-using DG.Sculpt.Cron.Exceptions;
 using FluentAssertions;
-using System;
 using Xunit;
 
 namespace DG.Sculpt.Tests.Cron
@@ -18,8 +16,11 @@ namespace DG.Sculpt.Tests.Cron
         [InlineData("TWO", 2)]
         public void Parse_Works(string value, int expected)
         {
-            var result = _parser.Parse(value);
-            result.Value.Should().Be(expected);
+            var result = _parser.TryParse(value);
+            result.HasResult.Should().BeTrue();
+
+            var actual = result.GetResultOrThrow();
+            actual.Value.Should().Be(expected);
         }
 
         [Theory]
@@ -27,10 +28,12 @@ namespace DG.Sculpt.Tests.Cron
         [InlineData("-1")]
         [InlineData("13")]
         [InlineData("THREE")]
+        [InlineData("")]
+        [InlineData(null)]
         public void Parse_Throws(string value)
         {
-            Action action = () => _parser.Parse(value);
-            action.Should().Throw<CronParsingException>();
+            var result = _parser.TryParse(value);
+            result.HasResult.Should().BeFalse();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using DG.Sculpt.Cron.Exceptions;
+using DG.Sculpt.Utilities;
 using System;
 using System.Linq;
 
@@ -7,13 +8,17 @@ namespace DG.Sculpt.Cron
     /// <summary>
     /// A parsing utility class for <see cref="CronValue"/>.
     /// </summary>
-    public class CronValueParser
+    internal class CronValueParser
     {
         private readonly string _fieldName;
         private readonly int _min;
         private readonly int _max;
         private readonly int _allowedOverflow;
         private readonly string[] _lookUp;
+
+        internal int MaxStepValue => _max - _min;
+
+        public string FieldName => _fieldName;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CronValueParser"/> class.
@@ -33,18 +38,6 @@ namespace DG.Sculpt.Cron
         }
 
         /// <summary>
-        /// Converts the given <paramref name="s"/> to a valid <see cref="CronValue"/>.
-        /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
-        /// <exception cref="CronParsingException" />
-        public CronValue Parse(string s)
-        {
-            var result = TryParse(s);
-            return result.GetResultOrThrow();
-        }
-
-        /// <summary>
         /// Converts the given <paramref name="s"/> to a valid <see cref="CronValue"/>. A return value indicates if the conversion succeeded.
         /// </summary>
         /// <param name="s"></param>
@@ -54,6 +47,10 @@ namespace DG.Sculpt.Cron
             if (s == CronValue.AnyIndicator)
             {
                 return ParseResult.Success(CronValue.Any);
+            }
+            if (string.IsNullOrEmpty(s))
+            {
+                return ParseResult.Throw<CronValue>(new CronParsingException(_fieldName, $"cannot be empty"));
             }
 
             if (int.TryParse(s, out int result))

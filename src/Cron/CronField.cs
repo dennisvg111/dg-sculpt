@@ -1,36 +1,60 @@
 ﻿using DG.Common;
+using DG.Sculpt.Cron.Exceptions;
+using DG.Sculpt.Utilities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace DG.Sculpt.Cron
 {
+    /// <summary>
+    /// Represents a single field in a <see cref="CronExpression"/>.
+    /// </summary>
     public sealed class CronField : IEquatable<CronField>
     {
-        private readonly CronValue _value;
-        private readonly CronValue _rangeUntil;
-        private readonly int? _step;
-        private readonly List<CronValue> _otherValues;
+        private readonly CronRange[] _ranges;
 
-        public bool IsAny => !_value.HasValue && !_step.HasValue;
+        /// <summary>
+        /// Indicates if this field matches any number.
+        /// </summary>
+        public bool IsAny => _ranges == null || Array.TrueForAll(_ranges, r => r.IsAny);
 
         /// <summary>
         /// Initializes a new instance of a <see cref="CronField"/>.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="rangeUntil"></param>
-        /// <param name="step"></param>
-        /// <param name="otherValues"></param>
-        public CronField(CronValue value, CronValue rangeUntil, int? step, List<CronValue> otherValues)
+        /// <param name="ranges"></param>
+        public CronField(params CronRange[] ranges)
         {
-            _value = value;
-            _rangeUntil = rangeUntil;
-            _step = step;
+            _ranges = ranges;
+        }
 
-            if (otherValues != null && otherValues.Any())
+        internal static CronField ForSingleValue(int? value)
+        {
+            return new CronField(new CronRange(new CronValue(value), CronValue.Any, null));
+        }
+
+        internal static ParseResult<CronField> TryParse(string value, CronValueParser parser)
+        {
+            if (value == "*")
             {
-                _otherValues = otherValues;
+                return ParseResult.Success(ForSingleValue(null));
             }
+            if (string.IsNullOrEmpty(value))
+            {
+                return ParseResult.Throw<CronField>(new CronParsingException(parser.FieldName, "value cannot be empty"));
+            }
+            var ranges = value.Split(',');
+            var parsed = new CronRange[ranges.Length];
+            for (int i = 0; i < ranges.Length; i++)
+            {
+                var parseResult = CronRange.TryParse(ranges[i], parser);
+                if (!parseResult.TryGetResult(out CronRange range))
+                {
+                    return parseResult.CopyExceptionResult<CronField>();
+                }
+                parsed[i] = range;
+            }
+
+            return ParseResult.Success(new CronField(parsed));
         }
 
         /// <summary>
@@ -39,49 +63,17 @@ namespace DG.Sculpt.Cron
         /// <returns></returns>
         public override string ToString()
         {
-            string result = _value.ToString();
             if (IsAny)
             {
-                return result;
+                return CronValue.AnyIndicator;
             }
-            if (_otherValues != null && _otherValues.Any())
-            {
-                result += "," + string.Join(",", _otherValues);
-            }
-            if (_rangeUntil.HasValue)
-            {
-                result += "-" + _rangeUntil.ToString();
-            }
-            if (_step.HasValue)
-            {
-                result += "/" + _step;
-            }
-            return result;
-        }
-
-        public static bool TryParse(string value, CronValueParser parser, out CronField result)
-        {
-            if (value == "*")
-            {
-                result = new CronField(CronValue.Any, CronValue.Any, null, null);
-                return true;
-            }
-
-            result = null;
-            return false;
+            return string.Join(",", _ranges.Select(r => r.ToString()));
         }
 
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            var hash = HashCode.Of(_value)
-                .And(_rangeUntil)
-                .And(_step);
-            if (_otherValues != null)
-            {
-                hash = hash.AndEach(_otherValues);
-            }
-            return hash;
+            return HashCode.OfEach(_ranges);
         }
 
         /// <inheritdoc/>
@@ -93,11 +85,11 @@ namespace DG.Sculpt.Cron
         /// <inheritdoc/>
         public bool Equals(CronField other)
         {
-            return other != null
-                && _value.Equals(other._value)
-                && _rangeUntil.Equals(other._rangeUntil)
-                && _step == other._step
-                && ((_otherValues == null && other._otherValues == null) || _otherValues.SequenceEqual(other._otherValues));
+            if (other == null)
+            {
+                return false;
+            }
+            return (_ranges == null && other._ranges == null) || _ranges.SequenceEqual(other._ranges);
         }
     }
 }

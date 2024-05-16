@@ -1,9 +1,12 @@
-﻿using System;
+﻿using DG.Sculpt.Utilities;
+using System;
 
 namespace DG.Sculpt.Cron
 {
     public class CronExpression
     {
+        private readonly static CronValueParser[] _parsers = new CronValueParser[] { CronValueParser.Minutes, CronValueParser.Hours, CronValueParser.DayOfMonth, CronValueParser.Months, CronValueParser.DayOfWeek };
+
         private readonly CronField _minutes;
         private readonly CronField _hours;
         private readonly CronField _dayOfMonth;
@@ -25,17 +28,60 @@ namespace DG.Sculpt.Cron
             _dayOfWeek = dayOfWeek;
         }
 
-        public static CronExpression Parse(string value)
+        /// <summary>
+        /// Converts the given <paramref name="s"/> to a valid <see cref="CronExpression"/>.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static CronExpression Parse(string s)
         {
-            return null;
+            var result = TryParse(s);
+            return result.GetResultOrThrow();
         }
 
-        public static bool TryParse(string value, out CronExpression expression)
+        /// <summary>
+        /// Converts the given <paramref name="s"/> to a valid <see cref="CronExpression"/>. A return value indicates if the conversion succeeded.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        public static bool TryParse(string s, out CronExpression expression)
         {
-            expression = null;
-            return false;
+            var result = TryParse(s);
+            return result.TryGetResult(out expression);
         }
 
+        private static ParseResult<CronExpression> TryParse(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                return ParseResult.Throw<CronExpression>(new ArgumentException("Expression cannot be null or empty.", nameof(s)));
+            }
+            var fields = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (fields.Length != _parsers.Length)
+            {
+                return ParseResult.Throw<CronExpression>(new ArgumentException($"Expression should contain exactly {_parsers.Length} fields.", nameof(s)));
+            }
+
+            CronField[] parsed = new CronField[_parsers.Length];
+            for (int i = 0; i < _parsers.Length; i++)
+            {
+                var parseResult = CronField.TryParse(fields[i], _parsers[i]);
+                if (!parseResult.TryGetResult(out var field))
+                {
+                    return parseResult.CopyExceptionResult<CronExpression>();
+                }
+                parsed[i] = field;
+            }
+
+            return ParseResult.Success(new CronExpression(parsed[0], parsed[1], parsed[2], parsed[3], parsed[4]));
+        }
+
+        /// <summary>
+        /// <para>Returns a text representation of this <see cref="CronExpression"/>.</para>
+        /// <para>Note that the result of this function can be parsed using <see cref="TryParse(string, out CronExpression)"/>.</para>
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return $"{_minutes} {_hours} {_dayOfMonth} {_months} {_dayOfWeek}";
@@ -43,11 +89,7 @@ namespace DG.Sculpt.Cron
 
         #region Static instances
         private CronExpression(int? minutes, int? hours, int? dayOfMonth, int? month, int? dayOfWeek)
-            : this(new CronField(new CronValue(minutes), CronValue.Any, null, null),
-                  new CronField(new CronValue(hours), CronValue.Any, null, null),
-                  new CronField(new CronValue(dayOfMonth), CronValue.Any, null, null),
-                  new CronField(new CronValue(month), CronValue.Any, null, null),
-                  new CronField(new CronValue(dayOfWeek), CronValue.Any, null, null))
+            : this(CronField.ForSingleValue(minutes), CronField.ForSingleValue(hours), CronField.ForSingleValue(dayOfMonth), CronField.ForSingleValue(month), CronField.ForSingleValue(dayOfWeek))
         { }
 
         private static readonly Lazy<CronExpression> _yearly = new Lazy<CronExpression>(() => new CronExpression(0, 0, 1, 1, null));
