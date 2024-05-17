@@ -1,11 +1,16 @@
 ﻿using System;
 
-namespace DG.Sculpt.Cron
+namespace DG.Sculpt.Cron.Clock
 {
     public class CronClock
     {
         private readonly CronExpression _cronExpression;
         private DateTimeOffset _time;
+
+        private readonly TimeTransformation _minutesTransformation;
+        private readonly TimeTransformation _hoursTransformation;
+        private readonly TimeTransformation _daysTransformation;
+        private readonly TimeTransformation _monthsTransformation;
 
         public DateTimeOffset Time => _time;
 
@@ -18,7 +23,15 @@ namespace DG.Sculpt.Cron
         public CronClock(CronExpression cronExpression, DateTimeOffset time)
         {
             _cronExpression = cronExpression;
+            _minutesTransformation = TimeTransformation.ForMinutes(_cronExpression.Minutes.GetLowestValue());
+            _hoursTransformation = TimeTransformation.ForHours(_cronExpression.Hours.GetLowestValue());
+
             _time = time;
+        }
+
+        private static int GetLowestDayValue()
+        {
+
         }
 
         /// <summary>
@@ -37,21 +50,7 @@ namespace DG.Sculpt.Cron
         {
             _time = _time.AddMinutes(1);
 
-            TravelToClosestMinutes();
-        }
 
-        private void TravelToClosestMinutes()
-        {
-            if (!_cronExpression.Minutes.TryGetLowestOfAtLeast(_minutes, out int nextMinute))
-            {
-                nextMinute = _cronExpression.Minutes.GetLowestValue();
-            }
-            int minutesNeeded = nextMinute - _minutes;
-            if (nextMinute < _minutes)
-            {
-                minutesNeeded += 60;
-            }
-            _time = _time.AddMinutes(minutesNeeded);
         }
     }
 }

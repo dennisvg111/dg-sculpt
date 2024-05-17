@@ -1,7 +1,7 @@
 ﻿using DG.Common;
 using System;
 
-namespace DG.Sculpt.Cron
+namespace DG.Sculpt.Cron.FieldInternals
 {
     /// <summary>
     /// Represents a value in a <see cref="CronRange"/>.

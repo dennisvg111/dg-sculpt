@@ -3,7 +3,7 @@ using DG.Sculpt.Utilities;
 using System;
 using System.Linq;
 
-namespace DG.Sculpt.Cron
+namespace DG.Sculpt.Cron.FieldInternals
 {
     /// <summary>
     /// A parsing utility class for <see cref="CronValue"/>.
@@ -65,7 +65,7 @@ namespace DG.Sculpt.Cron
                 {
                     if (result - _allowedOverflow <= _max)
                     {
-                        return ParseResult.Success(new CronValue((result % (_max + 1) + _min), null));
+                        return ParseResult.Success(new CronValue(result % (_max + 1) + _min, null));
                     }
                     return ParseResult.Throw<CronValue>(new CronParsingException(_fieldName, $"{s} should be at most {_max}"));
                 }

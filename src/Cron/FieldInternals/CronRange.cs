@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DG.Sculpt.Cron
+namespace DG.Sculpt.Cron.FieldInternals
 {
     /// <summary>
     /// Represents an allowed range in a <see cref="CronField"/>.

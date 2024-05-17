@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DG.Sculpt.Cron
+namespace DG.Sculpt.Cron.FieldInternals
 {
     /// <summary>
     /// Represents a single field in a <see cref="CronExpression"/>.
@@ -134,7 +134,7 @@ namespace DG.Sculpt.Cron
             {
                 return false;
             }
-            return (_ranges == null && other._ranges == null) || _ranges.SequenceEqual(other._ranges);
+            return _ranges == null && other._ranges == null || _ranges.SequenceEqual(other._ranges);
         }
     }
 }
