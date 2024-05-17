@@ -29,5 +29,13 @@ namespace DG.Sculpt.Tests.Cron
 
             value.ToString().Should().Be("THREE");
         }
+
+        [Fact]
+        public void ToString_NamedWithoutValue_ReturnsAsterisk()
+        {
+            var value = new CronValue(null, "THREE");
+
+            value.ToString().Should().Be("*");
+        }
     }
 }
