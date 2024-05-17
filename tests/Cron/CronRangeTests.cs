@@ -12,7 +12,6 @@ namespace DG.Sculpt.Tests.Cron
         [InlineData(2, null, null, "2")]
         [InlineData(null, null, null, "*")]
         [InlineData(2, 5, null, "2-5")]
-        [InlineData(2, null, 4, "2/4")]
         [InlineData(2, 5, 4, "2-5/4")]
         [InlineData(null, null, 4, "*/4")]
         public void ToString_ReturnsCorrectValues(int? start, int? end, int? stepSize, string expected)
@@ -62,6 +61,25 @@ namespace DG.Sculpt.Tests.Cron
             var result = CronRange.TryParse(input, _parser);
 
             result.HasResult.Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData("*", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)]
+        [InlineData("3", 3)]
+        [InlineData("3-5", 3, 4, 5)]
+        [InlineData("9-2", 9, 10, 1, 2)]
+        [InlineData("*/2", 1, 3, 5, 7, 9)]
+        [InlineData("2/2", 2, 4, 6, 8, 10)]
+        [InlineData("2-6/2", 2, 4, 6)]
+        [InlineData("2-6/3", 2, 5)]
+        [InlineData("9-3/2", 9, 1, 3)]
+        public void GetAllowedValues_Works(string range, params int[] expected)
+        {
+            var parsedRange = CronRange.TryParse(range, _parser).GetResultOrThrow();
+
+            var allowed = parsedRange.GetAllowedValues(_parser.Min, _parser.Max);
+
+            allowed.Should().Equal(expected);
         }
     }
 }

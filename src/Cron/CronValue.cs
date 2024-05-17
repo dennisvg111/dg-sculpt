@@ -4,7 +4,7 @@ using System;
 namespace DG.Sculpt.Cron
 {
     /// <summary>
-    /// Represents a value in a <see cref="CronField"/>.
+    /// Represents a value in a <see cref="CronRange"/>.
     /// </summary>
     public struct CronValue : IEquatable<CronValue>
     {

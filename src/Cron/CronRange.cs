@@ -2,22 +2,84 @@
 using DG.Sculpt.Cron.Exceptions;
 using DG.Sculpt.Utilities;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DG.Sculpt.Cron
 {
-    public struct CronRange : IEquatable<CronRange>
+    /// <summary>
+    /// Represents an allowed range in a <see cref="CronField"/>.
+    /// </summary>
+    public readonly struct CronRange : IEquatable<CronRange>
     {
         private readonly CronValue _start;
         private readonly CronValue _end;
         private readonly int? _stepValue;
 
+        /// <summary>
+        /// Indicates if this range allows any value.
+        /// </summary>
         public bool IsAny => !_start.HasValue && !_stepValue.HasValue;
 
-        public CronRange(CronValue from, CronValue to, int? stepValue)
+        /// <summary>
+        /// <para>Initializes a new instance of <see cref="CronRange"/>.</para>
+        /// <para>Throws an <see cref="ArgumentException"/> if <paramref name="start"/> and <paramref name="stepValue"/> have a value but <paramref name="end"/> does not.</para>
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="stepValue"></param>
+        /// <exception cref="ArgumentException"></exception>
+        internal CronRange(CronValue start, CronValue end, int? stepValue)
         {
-            _start = from;
-            _end = to;
+            if (start.HasValue && stepValue.HasValue && !end.HasValue)
+            {
+                throw new ArgumentException("range end cannot be empty if start end step have value");
+            }
+            _start = start;
+            _end = end;
             _stepValue = stepValue;
+        }
+
+        public IEnumerable<int> GetAllowedValues(int min, int max)
+        {
+            if (_start.HasValue && !_end.HasValue && !_stepValue.HasValue)
+            {
+                return new int[] { _start.Value };
+            }
+            var range = Enumerable.Range(min, max - min + 1);
+            range = FilterOnStartEnd(range);
+            range = FilterOnSteps(range);
+
+            return range;
+        }
+
+        private IEnumerable<int> FilterOnStartEnd(IEnumerable<int> range)
+        {
+            if (!_start.HasValue)
+            {
+                return range;
+            }
+            var startValue = _start.Value;
+            if (!_end.HasValue)
+            {
+                return range.Where(v => v == startValue);
+            }
+            var endValue = _end.Value;
+            if (startValue <= endValue)
+            {
+                return range.Where(v => v >= startValue && v <= endValue);
+            }
+            return Enumerable.Concat(range.Where(v => v >= startValue), range.Where(v => v <= endValue));
+        }
+
+        private IEnumerable<int> FilterOnSteps(IEnumerable<int> range)
+        {
+            if (!_stepValue.HasValue)
+            {
+                return range;
+            }
+            var stepValue = _stepValue.Value;
+            return range.Where((x, i) => i % stepValue == 0);
         }
 
         internal static ParseResult<CronRange> TryParse(string s, CronValueParser parser)

@@ -22,9 +22,19 @@ namespace DG.Sculpt.Cron
         /// Initializes a new instance of a <see cref="CronField"/>.
         /// </summary>
         /// <param name="ranges"></param>
-        public CronField(params CronRange[] ranges)
+        private CronField(params CronRange[] ranges)
         {
             _ranges = ranges;
+        }
+
+        public int GetFirstValue()
+        {
+            return 0;
+        }
+
+        public int GetNextValue(int current)
+        {
+            return 0;
         }
 
         internal static CronField ForSingleValue(int? value)
