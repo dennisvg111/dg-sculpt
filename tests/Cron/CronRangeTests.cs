@@ -31,7 +31,7 @@ namespace DG.Sculpt.Tests.Cron
 
             result.HasResult.Should().BeTrue();
             var actual = result.GetResultOrThrow();
-            actual.IsAny.Should().BeTrue();
+            actual.IsWildcard.Should().BeTrue();
         }
 
         [Theory]

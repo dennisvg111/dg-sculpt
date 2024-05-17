@@ -1,4 +1,5 @@
-﻿using DG.Sculpt.Utilities;
+﻿using DG.Common.Exceptions;
+using DG.Sculpt.Utilities;
 using System;
 
 namespace DG.Sculpt.Cron
@@ -7,11 +8,11 @@ namespace DG.Sculpt.Cron
     {
         private readonly static CronValueParser[] _parsers = new CronValueParser[] { CronValueParser.Minutes, CronValueParser.Hours, CronValueParser.DayOfMonth, CronValueParser.Months, CronValueParser.DayOfWeek };
 
-        private readonly CronField _minutes;
-        private readonly CronField _hours;
-        private readonly CronField _dayOfMonth;
-        private readonly CronField _months;
-        private readonly CronField _dayOfWeek;
+        private readonly IReadOnlyCronField _minutes;
+        private readonly IReadOnlyCronField _hours;
+        private readonly IReadOnlyCronField _dayOfMonth;
+        private readonly IReadOnlyCronField _months;
+        private readonly IReadOnlyCronField _dayOfWeek;
 
         public IReadOnlyCronField Minutes => _minutes;
         public IReadOnlyCronField Hours => _hours;
@@ -19,13 +20,29 @@ namespace DG.Sculpt.Cron
         public IReadOnlyCronField Months => _months;
         public IReadOnlyCronField DayOfWeek => _dayOfWeek;
 
-        private CronExpression(CronField minutes, CronField hours, CronField dayOfMonth, CronField month, CronField dayOfWeek)
+        public CronExpression(IReadOnlyCronField minutes, IReadOnlyCronField hours, IReadOnlyCronField dayOfMonth, IReadOnlyCronField month, IReadOnlyCronField dayOfWeek)
         {
+            ThrowIf.Parameter.IsNull(minutes, nameof(minutes));
+            ThrowIf.Parameter.IsNull(hours, nameof(hours));
+            ThrowIf.Parameter.IsNull(dayOfMonth, nameof(dayOfMonth));
+            ThrowIf.Parameter.IsNull(month, nameof(month));
+            ThrowIf.Parameter.IsNull(dayOfWeek, nameof(dayOfWeek));
+
             _minutes = minutes;
             _hours = hours;
             _dayOfMonth = dayOfMonth;
             _months = month;
             _dayOfWeek = dayOfWeek;
+        }
+
+        public DateTimeOffset GetNextOccurrence(DateTimeOffset startingFrom, bool includeCurrent = false)
+        {
+            var clock = new CronClock(this, startingFrom);
+            if (!includeCurrent || !clock.IsValid())
+            {
+                clock.TravelToNextOccurence();
+            }
+            return clock.Time;
         }
 
         /// <summary>
@@ -84,19 +101,15 @@ namespace DG.Sculpt.Cron
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{_minutes} {_hours} {_dayOfMonth} {_months} {_dayOfWeek}";
+            return $"{_minutes.AsString()} {_hours.AsString()} {_dayOfMonth.AsString()} {_months.AsString()} {_dayOfWeek.AsString()}";
         }
 
         #region Static instances
-        private CronExpression(int? minutes, int? hours, int? dayOfMonth, int? month, int? dayOfWeek)
-            : this(CronField.ForSingleValue(minutes), CronField.ForSingleValue(hours), CronField.ForSingleValue(dayOfMonth), CronField.ForSingleValue(month), CronField.ForSingleValue(dayOfWeek))
-        { }
-
-        private static readonly Lazy<CronExpression> _yearly = new Lazy<CronExpression>(() => new CronExpression(0, 0, 1, 1, null));
-        private static readonly Lazy<CronExpression> _monthly = new Lazy<CronExpression>(() => new CronExpression(0, 0, 1, null, null));
-        private static readonly Lazy<CronExpression> _weekly = new Lazy<CronExpression>(() => new CronExpression(0, 0, null, null, 0));
-        private static readonly Lazy<CronExpression> _daily = new Lazy<CronExpression>(() => new CronExpression(0, 0, null, null, null));
-        private static readonly Lazy<CronExpression> _hourly = new Lazy<CronExpression>(() => new CronExpression(0, null, null, null, null));
+        private static readonly Lazy<CronExpression> _yearly = new Lazy<CronExpression>(() => Parse("0 0 1 1 *"));
+        private static readonly Lazy<CronExpression> _monthly = new Lazy<CronExpression>(() => Parse("0 0 1 * *"));
+        private static readonly Lazy<CronExpression> _weekly = new Lazy<CronExpression>(() => Parse("0 0 * * 0"));
+        private static readonly Lazy<CronExpression> _daily = new Lazy<CronExpression>(() => Parse("0 0 * * *"));
+        private static readonly Lazy<CronExpression> _hourly = new Lazy<CronExpression>(() => Parse("0 * * * *"));
 
         /// <summary>
         /// Run once a year at midnight of 1 January.

@@ -10,7 +10,7 @@ namespace DG.Sculpt.Cron
     /// <summary>
     /// Represents an allowed range in a <see cref="CronField"/>.
     /// </summary>
-    public readonly struct CronRange : IEquatable<CronRange>
+    internal readonly struct CronRange : IEquatable<CronRange>
     {
         private readonly CronValue _start;
         private readonly CronValue _end;
@@ -19,7 +19,7 @@ namespace DG.Sculpt.Cron
         /// <summary>
         /// Indicates if this range allows any value.
         /// </summary>
-        public bool IsAny => !_start.HasValue && !_stepValue.HasValue;
+        public bool IsWildcard => !_start.HasValue && !_stepValue.HasValue;
 
         /// <summary>
         /// <para>Initializes a new instance of <see cref="CronRange"/>.</para>
@@ -138,7 +138,7 @@ namespace DG.Sculpt.Cron
         /// <returns></returns>
         public override string ToString()
         {
-            if (IsAny)
+            if (IsWildcard)
             {
                 return CronValue.AnyIndicator;
             }

@@ -2,6 +2,7 @@
 using DG.Sculpt.Cron.Exceptions;
 using DG.Sculpt.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DG.Sculpt.Cron
@@ -9,44 +10,75 @@ namespace DG.Sculpt.Cron
     /// <summary>
     /// Represents a single field in a <see cref="CronExpression"/>.
     /// </summary>
-    public sealed class CronField : IReadOnlyCronField, IEquatable<CronField>
+    internal sealed class CronField : IReadOnlyCronField, IEquatable<CronField>
     {
         private readonly CronRange[] _ranges;
+        private readonly bool _isWildcard;
+        private readonly Lazy<int[]> _lazyOrderdAllowedValues;
 
-        /// <summary>
-        /// Indicates if this field matches any number.
-        /// </summary>
-        public bool IsAny => _ranges == null || Array.TrueForAll(_ranges, r => r.IsAny);
+        /// <inheritdoc/>
+        public bool IsWildcard => _isWildcard;
+
+        /// <inheritdoc/>
+        public IReadOnlyList<int> AllowedValues => _lazyOrderdAllowedValues.Value;
 
         /// <summary>
         /// Initializes a new instance of a <see cref="CronField"/>.
         /// </summary>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
         /// <param name="ranges"></param>
-        private CronField(params CronRange[] ranges)
+        internal CronField(int min, int max, params CronRange[] ranges)
         {
             _ranges = ranges;
+            _isWildcard = CheckForWildcard();
+            _lazyOrderdAllowedValues = new Lazy<int[]>(() => CalculateAllowedValues(min, max));
         }
 
-        public int GetFirstValue()
+        private bool CheckForWildcard()
         {
-            return 0;
+            return _ranges == null || _ranges.Length == 0 || Array.Exists(_ranges, r => r.IsWildcard);
         }
 
-        public int GetNextValue(int current)
+        private int[] CalculateAllowedValues(int min, int max)
         {
-            return 0;
+            if (_ranges != null && _ranges.Length > 0)
+            {
+                return _ranges.SelectMany(r => r.GetAllowedValues(min, max)).Distinct().OrderBy(v => v).ToArray();
+            }
+            return Enumerable.Range(min, max - min + 1).ToArray();
         }
 
-        internal static CronField ForSingleValue(int? value)
+        /// <inheritdoc/>
+        public bool CanBe(int value)
         {
-            return new CronField(new CronRange(new CronValue(value), CronValue.Any, null));
+            return _lazyOrderdAllowedValues.Value.Contains(value);
+        }
+
+        /// <inheritdoc/>
+        public int GetLowestValue()
+        {
+            return _lazyOrderdAllowedValues.Value[0];
+        }
+
+        /// <inheritdoc/>
+        public bool TryGetLowestOfAtLeast(int atLeast, out int foundValue)
+        {
+            var options = _lazyOrderdAllowedValues.Value.Where(v => v >= atLeast);
+            if (!options.Any())
+            {
+                foundValue = atLeast;
+                return false;
+            }
+            foundValue = options.First();
+            return true;
         }
 
         internal static ParseResult<CronField> TryParse(string value, CronValueParser parser)
         {
             if (value == "*")
             {
-                return ParseResult.Success(ForSingleValue(null));
+                return ParseResult.Success(new CronField(parser.Min, parser.Max, new CronRange(CronValue.Any, CronValue.Any, null)));
             }
             if (string.IsNullOrEmpty(value))
             {
@@ -64,20 +96,23 @@ namespace DG.Sculpt.Cron
                 parsed[i] = range;
             }
 
-            return ParseResult.Success(new CronField(parsed));
+            return ParseResult.Success(new CronField(parser.Min, parser.Max, parsed));
         }
 
-        /// <summary>
-        /// Returns a text representation of this field.
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
+        /// <inheritdoc/>
+        public string AsString()
         {
-            if (IsAny)
+            if (IsWildcard)
             {
                 return CronValue.AnyIndicator;
             }
             return string.Join(",", _ranges.Select(r => r.ToString()));
+        }
+
+        /// <inheritdoc cref="IReadOnlyCronField.AsString"/>
+        public override string ToString()
+        {
+            return AsString();
         }
 
         /// <inheritdoc/>

@@ -6,7 +6,7 @@ namespace DG.Sculpt.Cron
     /// <summary>
     /// Represents a value in a <see cref="CronRange"/>.
     /// </summary>
-    public struct CronValue : IEquatable<CronValue>
+    internal struct CronValue : IEquatable<CronValue>
     {
         internal const string AnyIndicator = "*";
 
