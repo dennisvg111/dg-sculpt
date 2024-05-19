@@ -1,6 +1,7 @@
 ﻿using System;
+using DG.Sculpt.Cron.FieldInternals;
 
-namespace DG.Sculpt.Cron.Clock.Transformations
+namespace DG.Sculpt.Cron.Transformations
 {
     internal class MinutesTransformation : ITimeTransformation
     {
@@ -9,6 +10,11 @@ namespace DG.Sculpt.Cron.Clock.Transformations
         public MinutesTransformation(IReadOnlyCronField minutesField)
         {
             _minutesField = minutesField;
+        }
+
+        public static MinutesTransformation For(CronSchedule expression)
+        {
+            return new MinutesTransformation(expression.Minutes);
         }
 
         public DateTimeOffset MoveBackwardsToLowest(DateTimeOffset time)
@@ -32,7 +38,7 @@ namespace DG.Sculpt.Cron.Clock.Transformations
 
         private DateTimeOffset MoveTo(DateTimeOffset time, int target)
         {
-            int secondsNeeded = (target * 60) - (time.Minute * 60 + time.Second);
+            int secondsNeeded = target * 60 - (time.Minute * 60 + time.Second);
             if (secondsNeeded < 0)
             {
                 secondsNeeded += 3600;

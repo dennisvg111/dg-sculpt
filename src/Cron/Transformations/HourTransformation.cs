@@ -1,6 +1,7 @@
 ﻿using System;
+using DG.Sculpt.Cron.FieldInternals;
 
-namespace DG.Sculpt.Cron.Clock.Transformations
+namespace DG.Sculpt.Cron.Transformations
 {
     internal class HourTransformation : ITimeTransformation
     {
@@ -9,6 +10,11 @@ namespace DG.Sculpt.Cron.Clock.Transformations
         public HourTransformation(IReadOnlyCronField hourField)
         {
             _hourField = hourField;
+        }
+
+        public static HourTransformation For(CronSchedule expression)
+        {
+            return new HourTransformation(expression.Hours);
         }
 
         public DateTimeOffset MoveBackwardsToLowest(DateTimeOffset time)

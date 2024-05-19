@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DG.Sculpt.Cron.Clock
+namespace DG.Sculpt.Cron.Transformations
 {
     internal interface ITimeTransformation
     {

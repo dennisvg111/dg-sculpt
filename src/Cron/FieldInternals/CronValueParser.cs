@@ -100,27 +100,27 @@ namespace DG.Sculpt.Cron.FieldInternals
             "SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"));
 
         /// <summary>
-        /// Parser used for <see cref="CronExpression.Minutes"/>.
+        /// Parser used for <see cref="CronSchedule.Minutes"/>.
         /// </summary>
         public static CronValueParser Minutes => _minutes.Value;
 
         /// <summary>
-        /// Parser used for <see cref="CronExpression.Hours"/>.
+        /// Parser used for <see cref="CronSchedule.Hours"/>.
         /// </summary>
         public static CronValueParser Hours => _hours.Value;
 
         /// <summary>
-        /// Parser used for <see cref="CronExpression.DayOfMonth"/>.
+        /// Parser used for <see cref="CronSchedule.DayOfMonth"/>.
         /// </summary>
         public static CronValueParser DayOfMonth => _dayOfMonth.Value;
 
         /// <summary>
-        /// Parser used for <see cref="CronExpression.Months"/>.
+        /// Parser used for <see cref="CronSchedule.Months"/>.
         /// </summary>
         public static CronValueParser Months => _months.Value;
 
         /// <summary>
-        /// Parser used for <see cref="CronExpression.DayOfWeek"/>.
+        /// Parser used for <see cref="CronSchedule.DayOfWeek"/>.
         /// </summary>
         public static CronValueParser DayOfWeek => _dayOfWeek.Value;
         #endregion

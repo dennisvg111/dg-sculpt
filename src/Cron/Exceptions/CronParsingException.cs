@@ -5,7 +5,7 @@ using System.Security.Permissions;
 namespace DG.Sculpt.Cron.Exceptions
 {
     /// <summary>
-    /// Represents errors that occur while parsing a <see cref="CronExpression"/>
+    /// Represents errors that occur while parsing a <see cref="CronSchedule"/>
     /// </summary>
     [Serializable]
     public sealed class CronParsingException : Exception

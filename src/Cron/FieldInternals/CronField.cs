@@ -8,7 +8,7 @@ using System.Linq;
 namespace DG.Sculpt.Cron.FieldInternals
 {
     /// <summary>
-    /// Represents a single field in a <see cref="CronExpression"/>.
+    /// Represents a single field in a <see cref="CronSchedule"/>.
     /// </summary>
     internal sealed class CronField : IReadOnlyCronField, IEquatable<CronField>
     {
@@ -52,6 +52,10 @@ namespace DG.Sculpt.Cron.FieldInternals
         /// <inheritdoc/>
         public bool CanBe(int value)
         {
+            if (_isWildcard)
+            {
+                return true;
+            }
             return _lazyOrderdAllowedValues.Value.Contains(value);
         }
 

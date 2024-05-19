@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace DG.Sculpt.Cron
+namespace DG.Sculpt.Cron.FieldInternals
 {
     /// <summary>
-    /// Represents a single field in a <see cref="CronExpression"/>.
+    /// Represents a single field in a <see cref="CronSchedule"/>.
     /// </summary>
     public interface IReadOnlyCronField
     {
