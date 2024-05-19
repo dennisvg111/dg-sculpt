@@ -1,8 +1,8 @@
-﻿using DG.Sculpt.Cron;
+﻿using DG.Sculpt.Cron.FieldInternals;
 using FluentAssertions;
 using Xunit;
 
-namespace DG.Sculpt.Tests.Cron
+namespace DG.Sculpt.Tests.Cron.FieldInternals
 {
     public class CronFieldTests
     {

@@ -8,7 +8,7 @@ namespace DG.Sculpt.Cron.Clock
         private DateTimeOffset _result;
 
         public bool IsChanged => _isChanged;
-        public DateTimeOffset Result => _result;
+        public DateTimeOffset Time => _result;
 
         public TransformationResult(bool isChanged, DateTimeOffset result)
         {

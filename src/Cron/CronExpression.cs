@@ -1,4 +1,5 @@
 ﻿using DG.Common.Exceptions;
+using DG.Sculpt.Cron.Clock;
 using DG.Sculpt.Cron.FieldInternals;
 using DG.Sculpt.Utilities;
 using System;
@@ -41,7 +42,7 @@ namespace DG.Sculpt.Cron
             var clock = new CronClock(this, startingFrom);
             if (!includeCurrent || !clock.IsValid())
             {
-                clock.TravelToNextOccurence();
+                clock.MoveToNextOccurence();
             }
             return clock.Time;
         }

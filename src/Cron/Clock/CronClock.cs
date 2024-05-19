@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DG.Sculpt.Cron.Clock.Transformations;
+using System;
 
 namespace DG.Sculpt.Cron.Clock
 {
@@ -7,10 +8,7 @@ namespace DG.Sculpt.Cron.Clock
         private readonly CronExpression _cronExpression;
         private DateTimeOffset _time;
 
-        private readonly TimeTransformation _minutesTransformation;
-        private readonly TimeTransformation _hoursTransformation;
-        private readonly TimeTransformation _daysTransformation;
-        private readonly TimeTransformation _monthsTransformation;
+        private readonly ITimeTransformation[] _transformations;
 
         public DateTimeOffset Time => _time;
 
@@ -23,15 +21,14 @@ namespace DG.Sculpt.Cron.Clock
         public CronClock(CronExpression cronExpression, DateTimeOffset time)
         {
             _cronExpression = cronExpression;
-            _minutesTransformation = TimeTransformation.ForMinutes(_cronExpression.Minutes.GetLowestValue());
-            _hoursTransformation = TimeTransformation.ForHours(_cronExpression.Hours.GetLowestValue());
 
             _time = time;
-        }
 
-        private static int GetLowestDayValue()
-        {
-
+            _transformations = new ITimeTransformation[]
+            {
+                new MinutesTransformation(_cronExpression.Minutes),
+                new HourTransformation(_cronExpression.Hours)
+            };
         }
 
         /// <summary>
@@ -46,11 +43,33 @@ namespace DG.Sculpt.Cron.Clock
                 && (_cronExpression.DayOfWeek.CanBe(_dayOfWeek) || _cronExpression.DayOfMonth.CanBe(_dayOfMonth));
         }
 
-        public void TravelToNextOccurence()
+        public void MoveToNextOccurence()
         {
             _time = _time.AddMinutes(1);
+            MoveWhileNotValid();
+        }
 
+        public void MoveWhileNotValid()
+        {
+            for (int i = 0; i < _transformations.Length; i++)
+            {
+                var result = _transformations[i].MoveForwardWhileNotValid(_time);
+                _time = result.Time;
+                if (result.IsChanged && i > 0)
+                {
+                    ResetLowerUnits(i - 1);
+                    MoveWhileNotValid();
+                    break;
+                }
+            }
+        }
 
+        private void ResetLowerUnits(int i)
+        {
+            for (; i >= 0; i--)
+            {
+                _time = _transformations[i].MoveBackwardsToLowest(_time);
+            }
         }
     }
 }
