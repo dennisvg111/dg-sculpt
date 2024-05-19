@@ -3,7 +3,7 @@
     <ProjectGuid>{AE8DA14B-B11E-4AE5-864F-817149CABF2A}</ProjectGuid>
     <TargetFramework>net452</TargetFramework>
     <AssemblyTitle>DG.Sculpt</AssemblyTitle>
-    <AssemblyVersion>1.13.1</AssemblyVersion>
+    <AssemblyVersion>0.1.1</AssemblyVersion>
     <Product>DG.Sculpt</Product>
     <Copyright>Copyright ©  2023</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
@@ -47,6 +47,9 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Dennisvg.DG.Common" Version="1.13.3" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Data.DataSetExtensions" />
