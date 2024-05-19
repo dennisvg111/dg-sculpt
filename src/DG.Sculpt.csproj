@@ -3,7 +3,7 @@
     <ProjectGuid>{AE8DA14B-B11E-4AE5-864F-817149CABF2A}</ProjectGuid>
     <TargetFramework>net452</TargetFramework>
     <AssemblyTitle>DG.Sculpt</AssemblyTitle>
-    <AssemblyVersion>0.1.0</AssemblyVersion>
+    <AssemblyVersion>0.1.1</AssemblyVersion>
     <Product>DG.Sculpt</Product>
     <Copyright>Copyright ©  2023</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
