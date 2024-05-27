@@ -1,6 +1,6 @@
 ﻿namespace DG.Sculpt.Serialization
 {
-    public class SerializationDictionary
+    public class SerializationDictionary : ISerializationObject
     {
     }
 }
